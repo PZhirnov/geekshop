@@ -1,10 +1,11 @@
 <!DOCTYPE html>
+{% load static %}
 <html>
 <head>
 	<meta charset="utf-8">
 	<title>Каталог</title>
-	<link rel="stylesheet" href="/static/style.css">
-	<link rel="stylesheet" href="/static/fonts/font-awesome/css/font-awesome.css">
+	<link rel="stylesheet" type="text/css" href="{% static 'style.css' %}">
+	<link rel="stylesheet" href="{% static 'fonts/font-awesome/css/font-awesome.css' %}">
 </head>
 <body>
 	<div class="container">
@@ -12,9 +13,9 @@
 			<div class="header clearfix">
 				<a href="index.html" class="logo"></a>
 				<ul class="menu">
-					<li><a href="/">домой</a></li>
-					<li><a href="/products/" class="active">продукты</a></li>
-					<li><a href="/contact/">контакты</a></li>
+					<li><a href="{% url 'index' %}">домой</a></li>
+					<li><a href="{% url 'products' %}" class="active">продукты</a></li>
+					<li><a href="{% url 'contact' %}">контакты</a></li>
 
 				</ul>
 				<a href="#" class="search"></a>
