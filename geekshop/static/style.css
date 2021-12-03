@@ -1070,3 +1070,12 @@ td:first-child {
 .related-products a:hover .text{
 	display: block;
 }
+
+.info {
+	margin: 25px;
+	padding: 5px;
+}
+
+.user_status {
+
+}

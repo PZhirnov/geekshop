@@ -5,13 +5,12 @@
 	<meta charset="utf-8">
 	<title>
         {% block title %}
-            {{ title|title }}
+
         {% endblock %}
     </title>
     <!-- Блок стилей -->
     {% block css %}
-	<link rel="stylesheet" type="text/css" href="{% static 'style.css' %}">
-	<link rel="stylesheet" href="{% static 'fonts/font-awesome/css/font-awesome.css' %}">
+
     {% endblock %}
     <!-- Блок для скриптов -->
     {% block js %}
@@ -20,10 +19,23 @@
 </head>
 <body>
     <div class="container">
+       <div class="info">
+           <div align="left">
+              <i class="fa fa-map-marker" aria-hidden="true"></i><b> {{ user_info.city }}</b>
+           </div>
+           <div align="right" class = "user_status">
+              <i class="fa fa-user" aria-hidden="true"></i><b>  {{ user_info.name }}</b>
+               <i class="fa fa-star" aria-hidden="true"></i><b>  {{ user_info.status }}</b>
+               <i class="fa fa-credit-card-alt"></i><b>  {{ user_info.balance }}</b>
+               <i class="fa fa-bolt" aria-hidden="true"></i><b>  {{ user_info.bonus }}</b>
+           </div>
+
+       </div>
         <!-- Блок меню -->
         {% block menu %}
 
         {% endblock %}
+
         <!-- Контентная часть -->
         {% block content %}
 

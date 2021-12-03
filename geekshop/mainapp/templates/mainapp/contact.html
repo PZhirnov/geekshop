@@ -2,7 +2,6 @@
 {% load static %}
 
 {% block title %}
-	Контакты
 	{{ title|title }}
 {% endblock %}
 
@@ -16,11 +15,7 @@
 		<div class="hero">
 			<div class="header clearfix">
 				<a href="index.html" class="logo"></a>
-				<ul class="menu">
-					<li><a href="{% url 'index' %}">домой</a></li>
-					<li><a href="{% url 'products' %}">продукты</a></li>
-					<li><a href="{% url 'contact' %}" class="active">контакты</a></li>
-				</ul>
+				{% include 'includes/main_menu.html' %}
 				<a href="#" class="search"></a>
                 <a href="#" class="basket"></a>
 			</div>
