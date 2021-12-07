@@ -16,12 +16,15 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from mainapp.views import index, products, contact, context
+from django.conf.urls.static import static
+from django.conf import settings
+from django.conf.urls import include
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', index, name="index"),
-    path('products/', products, name="products"),
+    path('products/', include('mainapp.urls', namespace='products')),
     path('contact/', contact, name="contact"),
     path('context', context),
     path('products_all', products, name='products_all'),
@@ -29,6 +32,13 @@ urlpatterns = [
     path('products_office', products, name='products_office'),
     path('products_modern', products, name='products_modern'),
     path('products_classic', products, name='products_classic'),
-
-
 ]
+
+# path('products/', products, name="products"),
+''' убираем это:
+   
+   '''
+
+# Для настройки работы с медиафайлами обязательно добавить следующие строки
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

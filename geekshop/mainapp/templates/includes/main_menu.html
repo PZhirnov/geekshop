@@ -4,7 +4,6 @@
     <li>
                         <a href="{% url section.menu_section %}"
                            class="{% if request.resolver_match.url_name == section.menu_section %} active {% endif %}">
-
                             {{ section.name }}
                         </a>
     </li>
@@ -12,3 +11,5 @@
 
 
 </ul>
+
+
