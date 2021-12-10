@@ -4,6 +4,7 @@ from django.shortcuts import render
 import json
 from .models import ProductCategory, Product
 
+
 # Create your views here.
 
 ''' Формируем данные для создания меню категорий на странице products
@@ -27,7 +28,7 @@ main_menu = [
 ]
 
 
-''' Подгружаем данные о пользователе из json '''
+''' Подгружаем данные о пользователе из json - это только для теста сделано'''
 
 
 def user_info(user_login):
