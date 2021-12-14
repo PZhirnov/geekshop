@@ -1,15 +1,17 @@
 import os.path
 
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 import json
 from .models import ProductCategory, Product
-
+from basketapp.models import Basket
 
 # Create your views here.
 
-''' Формируем данные для создания меню категорий на странице products
-обращаемся к href и получаем ссылки, обращаемся к name и получаем название категории '''
 
+''' Формируем данные для создания меню категорий на странице products
+обращаемся к href и получаем ссылки, обращаемся к name и получаем название категории 
+
+Этот вариант исключили в Lesson 5, учитывая то, то загрузка делается из базы
 links_menu = [
     {'href': 'products_all', 'name': 'все'},
     {'href': 'products_home', 'name': 'дом'},
@@ -17,6 +19,7 @@ links_menu = [
     {'href': 'products_modern', 'name': 'модерн'},
     {'href': 'products_classic', 'name': 'классика'},
 ]
+'''
 
 ''' Главное меню сайта, которое встраивается на каждой странице.
 products -- написать так -- products:index сделать обязательно, учитывая то, что использщовался include в urls
@@ -56,17 +59,46 @@ def index(request):
 
 def products(request, pk=None):
     print(pk)  # вернем id, если он будет передан в products
-    # путь к файлу с данными json
-    file_path = os.path.join(module_dir, 'json_products/products.json')
-    # products в последствии передаем в список словарей, из которого берем данные по продуктам
-    products_data = json.load(open(file_path, 'r', encoding='utf8'))[:3]
+    # путь к файлу с данными json - 1 вариант вывода
+    # file_path = os.path.join(module_dir, 'json_products/products.json')
+    # products_data = json.load(open(file_path, 'r', encoding='utf8'))[:3]
+
+    title = 'продукты'
+    basket = []
+    if request.user.is_authenticated:
+        basket = Basket.objects.filter(user=request.user)
+
+    # Вариант вывода по запросу для категории
+    # 1. Получим все категории
+    links_menu = ProductCategory.objects.all()
+
+    if pk is not None:
+        if pk == 0:
+            products = Product.objects.all().order_by('price')
+            category = {'name': 'все'}
+        else:
+            category = get_object_or_404(ProductCategory, pk=pk)
+            products = Product.objects.filter(category__pk=pk).order_by('price')
+        print(basket[0].product)
+        content = {
+            'title': 'Продукты',
+            'links_menu': links_menu,
+            'main_menu': main_menu,
+            'user_info': user,
+            'products': products,
+            'category': category,
+            'basket': basket,
+        }
+        return render(request, 'mainapp/products_list.html', content)
+
+    # если не передавался id
+    same_products = Product.objects.all()[:5]
 
     content = {
         'title': 'Продукты',
         'links_menu': links_menu,
         'main_menu': main_menu,
-        'user_info': user,
-        'products': products_data,
+        'same_products': same_products,
     }
     return render(request, 'mainapp/products.html', content)
 
