@@ -3,6 +3,11 @@
 
 {% block content %}
 
+{% csrf_token %}
+    {% if next %}
+        <input type="hidden" name="next" value="{{ next }}">
+    {% endif %}
+{{ login_form.as_p }}
 
     <div class="login">
                 <div class="h2 text-center head">Вход на сайт</div>
