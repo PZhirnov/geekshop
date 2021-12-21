@@ -1096,3 +1096,11 @@ td:first-child {
 .user_status {
 
 }
+
+.same {
+    display: flex;
+}
+
+.basket_record img {
+    height: 150px;
+}

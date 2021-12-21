@@ -4,22 +4,11 @@ from django.shortcuts import render, get_object_or_404
 import json
 from .models import ProductCategory, Product
 from basketapp.models import Basket
+import random
 
 # Create your views here.
 
 
-''' Формируем данные для создания меню категорий на странице products
-обращаемся к href и получаем ссылки, обращаемся к name и получаем название категории 
-
-Этот вариант исключили в Lesson 5, учитывая то, то загрузка делается из базы
-links_menu = [
-    {'href': 'products_all', 'name': 'все'},
-    {'href': 'products_home', 'name': 'дом'},
-    {'href': 'products_office', 'name': 'офис'},
-    {'href': 'products_modern', 'name': 'модерн'},
-    {'href': 'products_classic', 'name': 'классика'},
-]
-'''
 
 ''' Главное меню сайта, которое встраивается на каждой странице.
 products -- написать так -- products:index сделать обязательно, учитывая то, что использщовался include в urls
@@ -31,9 +20,26 @@ main_menu = [
 ]
 
 
+def get_basket(user):
+    if user.is_authenticated:
+        return Basket.objects.filter(user=user)
+    else:
+        return []
+
+# Горячее предложение
+def get_hot_product():
+    products = Product.objects.all()
+    return random.sample(list(products), 1)[0]
+
+# Похожие продукты
+def get_same_products(hot_product):
+    same_products = Product.objects.filter(category=hot_product.category).exclude(pk=hot_product.pk)[:3]
+    return same_products
+
+
+
+
 ''' Подгружаем данные о пользователе из json - это только для теста сделано'''
-
-
 def user_info(user_login):
     with open("users_bd.json", "r", encoding="utf8") as read_file:
         data_user = json.load(read_file)
@@ -58,7 +64,7 @@ def index(request):
 
 
 def products(request, pk=None):
-    print(pk)  # вернем id, если он будет передан в products
+    # print(pk) - можно получить id, если он будет передан в products
     # путь к файлу с данными json - 1 вариант вывода
     # file_path = os.path.join(module_dir, 'json_products/products.json')
     # products_data = json.load(open(file_path, 'r', encoding='utf8'))[:3]
@@ -91,13 +97,15 @@ def products(request, pk=None):
         }
         return render(request, 'mainapp/products_list.html', content)
 
-    # если не передавался id
-    same_products = Product.objects.all()[:5]
+    # Горячее предложение
+    hot_product = get_hot_product()
+    same_products = get_same_products(hot_product)
 
     content = {
         'title': 'Продукты',
         'links_menu': links_menu,
         'main_menu': main_menu,
+        'hot_product': hot_product,
         'same_products': same_products,
     }
     return render(request, 'mainapp/products.html', content)
@@ -126,3 +134,17 @@ def context(request):
         ]
     }
     return render(request, 'mainapp/test_context.html', content)
+
+# Страница продукта
+def product(request, pk):
+    title = 'продукты'
+
+    content = {
+        'title': title,
+        'links_menu': ProductCategory.objects.all(),
+        'product': get_object_or_404(Product, pk=pk),
+        'basket': get_basket(request.user),
+    }
+
+    return render(request, 'mainapp/product.html', content)
+
