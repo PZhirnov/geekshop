@@ -1104,3 +1104,11 @@ td:first-child {
 .basket_record img {
     height: 150px;
 }
+
+.category_record.not_active {
+  opacity: 0.5;
+}
+
+.user_record.not_active {
+  opacity: 0.5;
+}

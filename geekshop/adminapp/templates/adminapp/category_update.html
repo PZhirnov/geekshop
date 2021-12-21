@@ -1,10 +1,15 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends 'authapp/base.html' %}
+{% load static %}
+
+{% block content %}
+    <form class="form-horizontal" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ update_form.as_p }}
+        <input class="form-control" type="submit" value="сохранить">
+    </form>
+    <button class="btn btn-round form-control last">
+        <a href="{% url 'admin:categories' %}">
+          к списку категорий
+        </a>
+    </button>
+{% endblock %}

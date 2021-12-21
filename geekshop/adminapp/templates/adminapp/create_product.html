@@ -1,10 +1,58 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends 'adminapp/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<h2>Вариант 1. Принимаем форму</h2>
+    <form class="form-horizontal" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ product_form.as_p }}
+        <input class="form-control" type="submit" value="сохранить">
+    </form>
+
+
+<!-- Это проработка создания формы руками --!>
+<h2>Вариант 2. Создаем форму руками</h2>
+  <form class="form-horizontal" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <!-- Выбор категории с уже установленным значением текущей категории -->
+        <p><label for="id_category">Категория:</label>
+            <select name="category" class="form-control" required="" id="id_category">
+                      <option selected="selected" value="{{ category_id.id }}">{{ category_id.name }}</option>
+                        {% for option in categories %}
+                            <option value="{{ option.pk }}">{{ option.name }}</option>
+                        {% endfor %}
+            </select>
+        </p>
+
+          <p><label for="id_name">Имя продукта:</label>
+              <input type="text" name="name" maxlength="128" class="form-control" required="" id="id_name">
+          </p>
+          <p><label for="id_image">Image:</label>
+              <input type="file" name="image" accept="image/*" class="form-control" id="id_image">
+          </p>
+          <p><label for="id_short_desc">Краткое описание продукта:</label>
+              <input type="text" name="short_desc" maxlength="60" class="form-control" id="id_short_desc">
+          </p>
+          <p><label for="id_description">Описание продукта:</label>
+              <textarea name="description" cols="40" rows="10" class="form-control" id="id_description"></textarea>
+          </p>
+
+            <p><label for="id_price">Цена продукта:</label>
+                <input type="number" name="price" value="0" step="0.01" class="form-control" required="" id="id_price">
+            </p>
+
+          <p><label for="id_quantity">Количество на складе:</label>
+              <input type="number" name="quantity" value="0" min="0" class="form-control" required="" id="id_quantity">
+          </p>
+
+        <input class="form-control" type="submit" value="сохранить">
+    </form>
+
+    <button class="btn btn-round form-control last">
+        <a href="{% url 'admin:products' cur_category.pk %}">
+          К списку продуктов в категории "{{ cur_category.name }}".
+        </a>
+    </button>
+{% endblock %}

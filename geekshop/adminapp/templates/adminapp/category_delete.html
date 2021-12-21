@@ -1,10 +1,18 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends 'adminapp/base.html' %}
+
+{% load static %}
+
+{% block content %}
+    <div class = 'confirmation'>
+        Вы уверены, что хотите удалить категорию " {{ delete_category.name }}"?
+        <form action="{% url 'admin:category_delete' delete_category.pk %}" method="post">
+            {% csrf_token %}
+            <input class="" type="submit" value="Удалить">
+        </form>
+            <button class="btn btn-success">
+                <a class="" href="{% url 'admin:categories' %}">
+                    Отмена
+                </a>
+            </button>
+    </div>
+{% endblock %}

@@ -1,10 +1,16 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends 'adminapp/base.html' %}
+
+{% load static %}
+
+{% block content %}
+    <form class="form-horizontal" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ product_form.as_p }}
+        <input class="form-control" type="submit" value="сохранить">
+    </form>
+    <button class="btn btn-round form-control last">
+        <a href="{% url 'admin:products' 10 %}">
+          К списку продуктов в категории "{{ product_form.category_id }}".
+        </a>
+    </button>
+{% endblock %}
