@@ -177,12 +177,12 @@ def product_update(request, pk):
     title = 'продукт / обновить данные'
     product_show = get_object_or_404(Product, pk=pk)
     if request.method == 'POST':
-        product_form = ProductForm(request.POST, instance=product_show)
+        product_form = ProductForm(request.POST, request.FILES, instance=product_show)
         if product_form.is_valid:
             product_form.save()
-        return HttpResponseRedirect(reverse('admin:products', args=[pk]))
+        return HttpResponseRedirect(reverse('admin:product_update', args=[product_show.pk]))
     else:
-        product_form = ProductForm(request.POST, instanse=product_show)
+        product_form = ProductForm(initial=product_show)
         print(type(product_form))
     content = {
         'title': title,
