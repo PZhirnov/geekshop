@@ -7,13 +7,13 @@ from authapp.forms import ShopUserRegisterForm
 from adminapp.forms import ShopUserEditForm
 from adminapp.forms import ShopUserAdminEditForm
 from adminapp.forms import ProductCategoryEditForm
-from adminapp.forms import ProductForm
-
+from adminapp.forms import ProductEditForm
 
 # Create your views here.
 
 
 # Пользователи
+
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -140,24 +140,21 @@ def products(request, pk):
 
 
 def product_create(request, pk):
-    title = 'продукт / создание'
+    title = 'продукт/создание'
     category = get_object_or_404(ProductCategory, pk=pk)
 
     if request.method == 'POST':
-        product_form = ProductForm(request.POST, request.FILES)
-        if product_form.is_valid:
+        product_form = ProductEditForm(request.POST, request.FILES)
+        if product_form.is_valid():
             product_form.save()
-        return HttpResponseRedirect(reverse('admin:products', args=[pk]))
-    product_form = ProductForm()
-    product_form.category_id = category.pk
-    # print(product_form.category_id)
-    # тут добавлены переменные для проработки вывода значений в шаблон
-    content = {
-        'title': title,
-        'product_form': product_form,
-        'categories': ProductCategory.objects.all(),
-        'cur_category': category
-    }
+            return HttpResponseRedirect(reverse('admin:products', args=[pk]))
+    else:
+        product_form = ProductEditForm(initial={'category': category})
+
+    content = {'title': title,
+               'create_form': product_form,
+               'category': category
+               }
     return render(request, 'adminapp/create_product.html', content)
 
 
@@ -174,21 +171,21 @@ def product_read(request, pk):
 
 
 def product_update(request, pk):
-    title = 'продукт / обновить данные'
-    product_show = get_object_or_404(Product, pk=pk)
+    title = 'продукт/редактирование'
+    edit_product = get_object_or_404(Product, pk=pk)
     if request.method == 'POST':
-        product_form = ProductForm(request.POST, request.FILES, instance=product_show)
-        if product_form.is_valid:
-            product_form.save()
-        return HttpResponseRedirect(reverse('admin:product_update', args=[product_show.pk]))
+        edit_form = ProductEditForm(request.POST, request.FILES, instance=edit_product)
+        if edit_form.is_valid():
+            edit_form.save()
+            return HttpResponseRedirect(reverse('admin:product_update', args=[edit_product.pk]))
     else:
-        product_form = ProductForm(initial=product_show)
-        print(type(product_form))
-    content = {
-        'title': title,
-        'product_form': product_form,
-    }
-    return render(request, 'adminapp/update_product.html', content)
+        edit_form = ProductEditForm(instance=edit_product)
+
+    content = {'title': title,
+               'update_form': edit_form,
+               'category': edit_product.category
+               }
+    return render(request, 'adminapp/product_update.html', content)
 
 
 def product_delete(request, pk):
