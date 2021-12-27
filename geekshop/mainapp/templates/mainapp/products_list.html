@@ -34,12 +34,21 @@
 					<h2>
                         Категория продуктов: {{ category.name|title }}
                     </h2>
-
 				</div>
+				<div class="paginator">
+					{% if products.has_previous %}
+						<a href="{% url 'products:page' category.pk products.previous_page_number %}"> << </a>
+					{% endif %}
+					<span class="current">
+						страница {{ products.number }} из {{ products.paginator.num_pages }}
+					</span>
+					{% if products.has_next %}
+						<a href="{% url 'products:page' category.pk products.next_page_number %}"> >> </a>
+					{% endif %}
+				</div>
+
 				<div class="related-products clearfix">
-
-
-            {% for product in products %}
+            		{% for product in products %}
 					<div class="block">
 						<a href="{% url 'products:product' product.pk %}">
 							<img src="/media/{{ product.image }}" alt="">
@@ -50,7 +59,7 @@
 							</div>
 						</a>
 					</div>
-            {% endfor %}
+            		{% endfor %}
 
 				</div>
 			</div>
