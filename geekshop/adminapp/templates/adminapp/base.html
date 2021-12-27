@@ -10,8 +10,7 @@
     </title>
     <!-- Блок стилей -->
    {% block css %}
-        <link rel="stylesheet" type="text/css" href="{% static 'style.css' %}">
-        <link rel="stylesheet" href="{% static 'fonts/font-awesome/css/font-awesome.css' %}">
+
    {% endblock %}
 
     <!-- Блок для скриптов -->
@@ -20,22 +19,22 @@
     {% endblock %}
 </head>
 
-<body>
-      <div class="admin_container">
-        <div class="h2 text-center head">
-          Админка
-        </div>
-            {% block menu %}
-              <div class="admin_menu">
-                {% include 'adminapp/includes/inc_menu.html' %}
-              </div>
-            {% endblock %}
+    <body>
+          <div class="admin_container">
+            <div class="h2 text-center head">
+              {{ title|title }}
+            </div>
+                {% block menu %}
+                  <div class="admin_menu">
+                    {% include 'adminapp/includes/inc_menu.html' %}
+                  </div>
+                {% endblock %}
 
 
-            {% block content %}
+                {% block content %}
 
-            {% endblock %}
-      </div>
-</body>
+                {% endblock %}
+          </div>
+    </body>
 
 </html>

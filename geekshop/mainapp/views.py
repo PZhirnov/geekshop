@@ -1,13 +1,15 @@
 import os.path
-
-from django.shortcuts import render, get_object_or_404
+import random
 import json
+from django.shortcuts import render, get_object_or_404
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from .models import ProductCategory, Product
 from basketapp.models import Basket
-import random
+from django.views.generic.list import ListView
+from django.utils.decorators import method_decorator
+
 
 # Create your views here.
-
 
 
 ''' Главное меню сайта, которое встраивается на каждой странице.
@@ -63,41 +65,85 @@ def index(request):
     return render(request, 'mainapp/index.html', content)
 
 
-def products(request, pk=None):
-    # print(pk) - можно получить id, если он будет передан в products
-    # путь к файлу с данными json - 1 вариант вывода
-    # file_path = os.path.join(module_dir, 'json_products/products.json')
-    # products_data = json.load(open(file_path, 'r', encoding='utf8'))[:3]
+# def products(request, pk=None):
+#
+#     title = 'продукты'
+#     basket = []
+#     if request.user.is_authenticated:
+#         basket = Basket.objects.filter(user=request.user)
+#
+#     # Вариант вывода по запросу для категории
+#     # 1. Получим все категории
+#     links_menu = ProductCategory.objects.all()
+#
+#     if pk is not None:
+#         if pk == 0:
+#             products = Product.objects.all().order_by('price')
+#             category = {'name': 'все'}
+#         else:
+#             category = get_object_or_404(ProductCategory, pk=pk)
+#             products = Product.objects.filter(category__pk=pk).order_by('price')
+#         print(basket[0].product)
+#         content = {
+#             'title': 'Продукты',
+#             'links_menu': links_menu,
+#             'main_menu': main_menu,
+#             'user_info': user,
+#             'products': products,
+#             'category': category,
+#             'basket': basket,
+#         }
+#         return render(request, 'mainapp/products_list.html', content)
+#
+#     # Горячее предложение
+#     hot_product = get_hot_product()
+#     same_products = get_same_products(hot_product)
+#
+#     content = {
+#         'title': 'Продукты',
+#         'links_menu': links_menu,
+#         'main_menu': main_menu,
+#         'hot_product': hot_product,
+#         'same_products': same_products,
+#     }
+#     return render(request, 'mainapp/products.html', content)
 
+
+
+
+
+def products(request, pk=None, page=1):
     title = 'продукты'
-    basket = []
-    if request.user.is_authenticated:
-        basket = Basket.objects.filter(user=request.user)
-
-    # Вариант вывода по запросу для категории
-    # 1. Получим все категории
-    links_menu = ProductCategory.objects.all()
-
+    links_menu = ProductCategory.objects.filter(is_active=True)
+    basket = get_basket(request.user)
+    # print(links_menu)
+    # print(pk)
     if pk is not None:
         if pk == 0:
-            products = Product.objects.all().order_by('price')
-            category = {'name': 'все'}
+            category = {
+                'pk': 0,
+                'name': 'все'
+            }
+            products = Product.objects.filter(is_active=True, category__is_active=True).order_by('price')
         else:
             category = get_object_or_404(ProductCategory, pk=pk)
-            products = Product.objects.filter(category__pk=pk).order_by('price')
-        print(basket[0].product)
+            products = Product.objects.filter(category__pk=pk, is_active=True, category__is_active=True).order_by('price')
+        paginator = Paginator(products, 3)
+        try:
+            products_paginator = paginator.page(page)
+        except PageNotAnInteger:
+            products_paginator = paginator.page(1)
+        except EmptyPage:
+            products_paginator = paginator.page(paginator.num_pages)
         content = {
-            'title': 'Продукты',
+            'title': title,
             'links_menu': links_menu,
-            'main_menu': main_menu,
-            'user_info': user,
-            'products': products,
             'category': category,
-            'basket': basket,
+            'products': products_paginator,
+            'basket': basket
         }
         return render(request, 'mainapp/products_list.html', content)
 
-    # Горячее предложение
     hot_product = get_hot_product()
     same_products = get_same_products(hot_product)
 
@@ -107,8 +153,10 @@ def products(request, pk=None):
         'main_menu': main_menu,
         'hot_product': hot_product,
         'same_products': same_products,
-    }
+        }
     return render(request, 'mainapp/products.html', content)
+
+
 
 
 def contact(request):
