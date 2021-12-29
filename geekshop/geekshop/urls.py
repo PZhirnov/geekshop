@@ -22,7 +22,7 @@ from django.conf.urls import include
 
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    # path('admin/', admin.site.urls),
     path('', index, name="index"),
     path('products/', include('mainapp.urls', namespace='products')),
     path('contact/', contact, name="contact"),
@@ -34,6 +34,7 @@ urlpatterns = [
     path('products_classic', products, name='products_classic'),
     path('auth/', include('authapp.urls', namespace='auth')),
     path('basket/', include('basketapp.urls', namespace='basket')),
+    path('admin/', include('adminapp.urls', namespace='admin')),
 ]
 
 # path('products/', products, name="products"),
